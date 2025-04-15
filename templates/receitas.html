@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receitas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Receitas Cadastradas</h1>
+    <div class="container">
+        <div class="actions">
+            <a href="{{ url_for('cadastrar_receita') }}">Nova Receita</a> |
+            <a href="{{ url_for('home') }}">Voltar para Página Principal</a>
+        </div>
+
+        {% if receitas %}
+            {% for rec in receitas %}
+                <div class="recipe">
+                    <h2>{{ rec.nome }}</h2>
+                    <strong>Total: R$ {{ "%.2f"|format(rec.custo_total) }}</strong>
+                    <a href="{{ url_for('editar_receita', receita_id=rec.id) }}">Editar</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Nenhuma receita cadastrada.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

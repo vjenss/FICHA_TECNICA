@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Ingrediente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Cadastro de Ingrediente</h1>
+    <form method="post">
+        <label>Nome:</label><br>
+        <input type="text" name="nome" placeholder="Digite o nome do ingrediente" title="Nome do ingrediente" required><br><br>
+
+        <label>Quantidade:</label><br>
+        <input type="number" name="quantidade" step="0.01" placeholder="Digite a quantidade" title="Quantidade do ingrediente" required><br><br>
+
+        <label>Unidade (ex: g, ml, un):</label><br>
+        <input type="text" name="unidade" placeholder="Digite a unidade (ex: g, ml, un)" title="Unidade do ingrediente" required><br><br>
+
+        <label>Preço Unitário (R$):</label><br>
+        <input type="number" name="preco" step="0.01" placeholder="Digite o preço unitário" title="Preço unitário do ingrediente" required><br><br>
+
+        <button type="submit">Salvar</button>
+    </form>
+    <br>
+    <a href="{{ url_for('home') }}">Voltar para Página Principal</a>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Receitas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Lista de Ingredientes</h1>
+
+    <div class="container">
+        <div class="actions">
+            <a href="{{ url_for('cadastro') }}">Cadastrar Novo Ingrediente</a> |
+            <a href="{{ url_for('cadastrar_receita') }}">Cadastrar Receita</a> |
+            <a href="{{ url_for('ver_receitas') }}">Ver Receitas</a>
+        </div>
+
+        <hr>
+
+        {% if ingredientes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Quantidade</th>
+                        <th>Unidade</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ing in ingredientes %}
+                    <tr>
+                        <td>{{ ing.nome }}</td>
+                        <td>{{ ing.quantidade }}</td>
+                        <td>{{ ing.unidade }}</td>
+                        <td>R$ {{ "%.2f"|format(ing.preco) }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_ingrediente', ingrediente_id=ing.id) }}">Editar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum ingrediente cadastrado ainda.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

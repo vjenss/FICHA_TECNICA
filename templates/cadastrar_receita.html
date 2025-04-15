@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Receita</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Cadastrar Receita</h1>
+
+    <form method="post">
+        <label for="nome-receita">Nome da Receita:</label>
+        <input type="text" id="nome-receita" name="nome" placeholder="Digite o nome da receita" required><br><br>
+
+        <h3>Ingredientes:</h3>
+        {% for ing in ingredientes %}
+            <label>
+                <input type="checkbox" name="ingrediente_{{ ing.id }}">
+                {{ ing.nome }} ({{ ing.unidade }}) - R$ {{ ing.preco }}
+            </label>
+            <label>
+                Quantidade usada: 
+                <input type="number" name="quantidade_{{ ing.id }}" step="0.01" placeholder="Digite a quantidade">
+            </label><br><br>
+        {% endfor %}
+
+        <button type="submit">Salvar Receita</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('home') }}">Voltar para Página Principal</a>
+</body>
+</html>
