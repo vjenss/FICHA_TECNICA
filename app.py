@@ -4,8 +4,11 @@ import os
 
 app = Flask(__name__)
 
-# Configura o caminho do banco de dados SQLite
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ingredientes.db'
+# Configura o caminho do banco de dados PostgreSQL do Supabase
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'postgresql://usuario:senha@host:porta/nome_do_banco'
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Cria o objeto de banco de dados
@@ -38,7 +41,6 @@ class Receita(db.Model):
 # Rota principal para mostrar todos os ingredientes
 @app.route('/')
 def home():
-    # Busca todos os ingredientes no banco de dados
     ingredientes = Ingrediente.query.all()
     return render_template('index.html', ingredientes=ingredientes)
 
@@ -46,13 +48,11 @@ def home():
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
-        # Pega os dados do formulário
         nome = request.form['nome']
         quantidade = float(request.form['quantidade'])
         unidade = request.form['unidade']
         preco = float(request.form['preco'])
 
-        # Cria um novo objeto Ingrediente
         novo_ingrediente = Ingrediente(
             nome=nome,
             quantidade=quantidade,
@@ -60,14 +60,11 @@ def cadastro():
             preco=preco
         )
 
-        # Adiciona no banco de dados e salva
         db.session.add(novo_ingrediente)
         db.session.commit()
 
-        # Redireciona para a tela inicial
         return redirect(url_for('home'))
 
-    # Se for GET, mostra o formulário
     return render_template('cadastro.html')
 
 @app.route('/receitas')
@@ -84,7 +81,7 @@ def ver_receitas():
         receitas_com_custos.append({
             'nome': receita.nome,
             'custo_total': custo_total,
-            'id': receita.id  # Certifique-se de incluir o ID para o link de edição
+            'id': receita.id
         })
 
     return render_template('receitas.html', receitas=receitas_com_custos)
@@ -115,7 +112,6 @@ def cadastrar_receita():
                     db.session.add(ing_rec)
 
         db.session.commit()
-        print(f'Custo total da receita "{nome_receita}": R$ {custo_total:.2f}')
         return redirect(url_for('ver_receitas'))
 
     ingredientes = Ingrediente.query.all()
@@ -128,12 +124,10 @@ def editar_receita(receita_id):
     ingredientes_usados = {ing_rec.ingrediente_id: ing_rec.quantidade_usada for ing_rec in receita.ingredientes_usados}
 
     if request.method == 'POST':
-        # Atualizar o nome da receita
         receita.nome = request.form['nome']
         db.session.commit()
 
-        # Atualizar os ingredientes usados
-        IngredienteReceita.query.filter_by(receita_id=receita.id).delete()  # Remove os ingredientes antigos
+        IngredienteReceita.query.filter_by(receita_id=receita.id).delete()
         db.session.commit()
 
         for ing in ingredientes:
@@ -157,7 +151,6 @@ def editar_ingrediente(ingrediente_id):
     ingrediente = Ingrediente.query.get_or_404(ingrediente_id)
 
     if request.method == 'POST':
-        # Atualizar os dados do ingrediente
         ingrediente.nome = request.form['nome']
         ingrediente.quantidade = float(request.form['quantidade'])
         ingrediente.unidade = request.form['unidade']
@@ -169,8 +162,7 @@ def editar_ingrediente(ingrediente_id):
     return render_template('editar_ingrediente.html', ingrediente=ingrediente)
 
 if __name__ == '__main__':
-    # Cria as tabelas do banco de dados (se ainda não existirem)
     with app.app_context():
         db.create_all()
-    port = int(os.environ.get('PORT', 5000))  # Obtém a porta da variável de ambiente ou usa 5000 como padrão
+    port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
